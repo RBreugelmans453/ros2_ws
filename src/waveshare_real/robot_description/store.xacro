@@ -1,0 +1,18 @@
+            <param name="front_left_wheel_name">flw_joint</param>
+            <param name="front_right_wheel_name">frw_joint</param>
+            <joint name="${prefix}flw_joint">
+                <command_interface name="velocity">
+                    <param name="min">-10</param>
+                    <param name="max">10</param>
+                </command_interface>
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>
+            <joint name="${prefix}frw_joint">
+                <command_interface name="velocity">
+                    <param name="min">-10</param>
+                    <param name="max">10</param>
+                </command_interface>
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>

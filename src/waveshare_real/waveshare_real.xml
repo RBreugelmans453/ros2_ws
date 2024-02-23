@@ -1,0 +1,9 @@
+<library path="waveshare_real">
+  <class name="waveshare_real/WaveShareHardware"
+         type="waveshare_real::WaveShareHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Test software for use with the waveshare rover
+    </description>
+  </class>
+</library>

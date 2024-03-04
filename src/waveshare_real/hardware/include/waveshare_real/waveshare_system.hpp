@@ -43,8 +43,8 @@ struct Config
 {
   std::string rear_left_wheel_name = "";
   std::string rear_right_wheel_name = "";
-  //std::string front_left_wheel_name = "";
-  //std::string front_right_wheel_name = "";
+  std::string front_left_wheel_name = "";
+  std::string front_right_wheel_name = "";
   float loop_rate = 0.0;
   std::string device = "";
   int baud_rate = 0;
@@ -101,8 +101,8 @@ private:
   Config cfg_;
   Wheel wheel_r_l_;
   Wheel wheel_r_r_;
-  //Wheel wheel_f_l_;
-  //Wheel wheel_f_r_;
+  Wheel wheel_f_l_;
+  Wheel wheel_f_r_;
 };
 
 }  // namespace waveshare_real

@@ -96,11 +96,23 @@ public:
 
     val_1 = std::atoi(token_1.c_str());
     val_2 = std::atoi(token_2.c_str());
+    std::cout << "Received: " << val_1 << std::endl;
   }
+
   void set_motor_values(int val_1, int val_2)
   {
     std::stringstream ss;
-    ss << "m " << val_1 << " " << val_2 << "\r";
+    int val_tbs_1;
+    int val_tbs_2;
+    if (val_1 == val_2) {
+      val_tbs_1 = val_1;
+      val_tbs_2 = val_2;
+    }
+    else {
+      val_tbs_1 = val_1 * 10;
+      val_tbs_2 = val_2 * 10;
+    }
+    ss << "m " << val_tbs_1 << " " << val_tbs_2 << "\r";
     send_msg(ss.str());
     std::cout << "Sent: " << ss.str() << std::endl;
   }
@@ -117,4 +129,4 @@ private:
     int timeout_ms_;
 };
 
-#endif // DIFFDRIVE_ARDUINO_ARDUINO_COMMS_HPP
+#endif

@@ -2,26 +2,39 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:macro name="waveshare_real_ros2_control" params="name prefix">
         <ros2_control name="${name}" type="system">
-        <hardware>
-            <plugin>waveshare_real/WaveShareHardware</plugin>
-            <param name="rear_left_wheel_name">rlw_joint</param>
-            <param name="rear_right_wheel_name">rrw_joint</param>
-            <param name="loop_rate">30</param>
-            <param name="device">/dev/ttyUSB0</param>
-            <param name="baud_rate">115200</param>
-            <param name="timeout_ms">1000</param>
-            <param name="enc_counts_per_rev">555</param>
-            <param name="pid_p">50</param>
-            <param name="pid_d">0</param>
-            <param name="pid_i">90</param>
-            <param name="pid_o">50</param>
-        </hardware>
+            <hardware>
+                <plugin>waveshare_real/WaveShareHardware</plugin>
+                <param name="rear_left_wheel_name">rlw_joint</param>
+                <param name="front_left_wheel_name">flw_joint</param>
+                <param name="rear_right_wheel_name">rrw_joint</param>
+                <param name="front_right_wheel_name">frw_joint</param>
+                <param name="loop_rate">30</param>
+                <param name="device">/dev/ttyUSB0</param>
+                <param name="baud_rate">115200</param>
+                <param name="timeout_ms">2000</param>
+                <param name="enc_counts_per_rev">2555</param>
+                <param name="pid_p">50</param>
+                <param name="pid_d">0</param>
+                <param name="pid_i">90</param>
+                <param name="pid_o">50</param>
+            </hardware>
+
             <joint name="${prefix}rlw_joint">
                 <command_interface name="velocity" />
                 <state_interface name="position" />
                 <state_interface name="velocity" />
             </joint>
             <joint name="${prefix}rrw_joint">
+                <command_interface name="velocity" />
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>
+            <joint name="${prefix}flw_joint">
+                <command_interface name="velocity" />
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>
+            <joint name="${prefix}frw_joint">
                 <command_interface name="velocity" />
                 <state_interface name="position" />
                 <state_interface name="velocity" />

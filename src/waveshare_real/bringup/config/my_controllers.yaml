@@ -2,16 +2,16 @@ controller_manager:
   ros__parameters:
     update_rate: 30
 
-    waveshare_real_controller:
-      type: diff_drive_controller/DiffDriveController
-    
     joint_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
+      
+    waveshare_real_controller:
+      type: diff_drive_controller/DiffDriveController
 
 waveshare_real_controller:
   ros__parameters:
-    left_wheel_names: ["rlw_joint"]
-    right_wheel_names: ["rrw_joint"]
+    left_wheel_names: ["rlw_joint", "flw_joint"]
+    right_wheel_names: ["frw_joint", "rrw_joint"]
 
     wheel_separation: 0.08
     wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
@@ -21,13 +21,14 @@ waveshare_real_controller:
     left_wheel_radius_multiplier: 1.0
     right_wheel_radius_multiplier: 1.0
 
-    publish_rate: 50.0
+    publish_rate: 30.0
     odom_frame_id: odom
     base_frame_id: base_link
     pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
-    open_loop: true
+    position_feedback: false
+    open_loop: false
     enable_odom_tf: true
 
     cmd_vel_timeout: 0.5
@@ -55,6 +56,3 @@ waveshare_real_controller:
     angular.z.min_acceleration: -1.0
     angular.z.max_jerk: 0.0
     angular.z.min_jerk: 0.0
-
-# joint_broad:
-#   ros__parameters:

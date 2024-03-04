@@ -7,7 +7,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
-from launch.actions import RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler
 from launch.event_handlers import OnProcessStart, OnProcessExit
 
 from launch_ros.actions import Node
@@ -19,6 +19,7 @@ def generate_launch_description():
 
     package_name='waveshare_real'
 
+    declared_arguments = []
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -32,6 +33,8 @@ def generate_launch_description():
         ]
     )
     robot_description = {"robot_description": robot_description_content}
+    ignore_time = {"ignore_timestamp": False}
+
     robot_controllers = PathJoinSubstitution(
         [
             FindPackageShare("waveshare_real"),
@@ -51,9 +54,9 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[robot_description],
+        parameters=[robot_description, ignore_time],
         remappings=[
-            ("/diff_drive_controller/cmd_vel", "/cmd_vel"),
+            ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
         ],
     )
 
@@ -69,6 +72,7 @@ def generate_launch_description():
         arguments=["waveshare_real_controller", "--controller-manager", "/controller_manager"],
     )
 
+
         # Delay start of robot_controller after `joint_state_broadcaster`
     delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -78,11 +82,12 @@ def generate_launch_description():
     )
 
 
-
-    # Launch them all!
-    return LaunchDescription([
+    nodes = [
         control_node,
         robot_state_pub_node,
         joint_broad_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
-    ])
+    ]
+
+    # Launch them all!
+    return LaunchDescription(declared_arguments+nodes)

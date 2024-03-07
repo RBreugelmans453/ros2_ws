@@ -11,31 +11,51 @@ class SquarePublisher(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
 
-    # drive forward for 3 seconds
+    # drive forward
     def timer_callback(self):
         msg = Twist()
-        msg.linear.x = 0.5
+        msg.linear.x = 0.2
         msg.angular.z = 0.0
         self.publisher_.publish(msg)
         self.get_logger().info('Publishing: "%s"' % msg.linear.x)
         self.i += 1
-        if self.i == 3:
+        global rotating
+        rotating = False
+        if self.i == 6:
             self.i = 0
             self.timer.cancel()
-            self.timer = self.create_timer(0.5, self.timer_callback2)
+            self.timer = self.create_timer(0.5, self.timer_callback3)
     
-    # rotate for 2 seconds
+    # rotate
     def timer_callback2(self):
         msg = Twist()
         msg.linear.x = 0.0
-        msg.angular.z = 1.0
+        msg.angular.z = 0.4
         self.publisher_.publish(msg)
         self.get_logger().info('Publishing: "%s"' % msg.angular.z)
         self.i += 1
+        global rotating 
+        rotating = True
         if self.i == 2:
             self.i = 0
             self.timer.cancel()
-            self.timer = self.create_timer(0.5, self.timer_callback)
+            self.timer = self.create_timer(0.5, self.timer_callback3)
+
+    # stop
+    def timer_callback3(self):
+        msg = Twist()
+        msg.linear.x = 0.0
+        msg.angular.z = 0.0
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.linear.x)
+        self.i += 1
+        if self.i == 1:
+            self.i = 0
+            self.timer.cancel()
+            if rotating == True:
+                self.timer = self.create_timer(0.5, self.timer_callback)
+            if rotating == False:
+                self.timer = self.create_timer(0.5, self.timer_callback2)
 
 def main(args=None):
     rclpy.init(args=args)

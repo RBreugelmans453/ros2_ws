@@ -109,8 +109,8 @@ public:
       val_tbs_2 = val_2;
     }
     else {
-      val_tbs_1 = val_1 * 10;
-      val_tbs_2 = val_2 * 10;
+      val_tbs_1 = val_1 * 32;
+      val_tbs_2 = val_2 * 32;
     }
     ss << "m " << val_tbs_1 << " " << val_tbs_2 << "\r";
     send_msg(ss.str());

@@ -104,11 +104,15 @@ public:
     std::stringstream ss;
     int val_tbs_1;
     int val_tbs_2;
+    
+    //check whether the values indicate turning, to increase the motor speed
     if (val_1 == val_2) {
       val_tbs_1 = val_1;
       val_tbs_2 = val_2;
     }
-    else {
+
+    //opposite values mean turning
+    else if (val_1 == -val_2 || val_2 == -val_1) {
       val_tbs_1 = val_1 * 32;
       val_tbs_2 = val_2 * 32;
     }

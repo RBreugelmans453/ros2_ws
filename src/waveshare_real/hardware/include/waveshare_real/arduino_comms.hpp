@@ -7,6 +7,9 @@
 #include <libserial/SerialPort.h>
 #include <iostream>
 
+#include "sensor_msgs/msg/imu.hpp"
+#include "rclcpp/rclcpp.hpp"
+
 
 LibSerial::BaudRate convert_baud_rate(int baud_rate)
 {
@@ -98,6 +101,42 @@ public:
     val_2 = std::atoi(token_2.c_str());
     std::cout << "Received: " << val_1 << std::endl;
   }
+/*
+  void read_imu_values(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ)
+  {
+    std::string response = send_msg("c\r");
+    // Trim leading and trailing whitespace and commas
+    size_t start = response.find_first_not_of(" ,");
+    size_t end = response.find_last_not_of(" ,");
+    response = response.substr(start, end - start + 1);
+
+    std::stringstream ss(response);
+    std::string token;
+    std::string imu_check;
+    int tokenCount = 0;
+    //std::cout << "received: " << response << std::endl;
+    while (std::getline(ss, token, ',')) {
+      // Skip empty tokens
+      if (token.empty()) continue;
+      tokenCount++;
+
+      switch (tokenCount) {
+          case 1: imu_check = token; break;
+          case 2: acceX = std::stof(token); break;
+          case 3: acceY = std::stof(token); break;
+          case 4: acceZ = std::stof(token); break;
+          case 5: gyroX = std::stof(token); break;
+          case 6: gyroY = std::stof(token); break;
+          case 7: gyroZ = std::stof(token); break;
+          case 8: magX = std::stof(token); break;
+          case 9: magY = std::stof(token); break;
+          case 10: magZ = std::stof(token); break;
+      }
+      //std::cout << "Received: " << imu_check << std::endl;
+    }    
+  }
+
+*/
 
   void set_motor_values(int val_1, int val_2)
   {
@@ -113,12 +152,12 @@ public:
 
     //opposite values mean turning
     else if (val_1 == -val_2 || val_2 == -val_1) {
-      val_tbs_1 = val_1 * 32;
-      val_tbs_2 = val_2 * 32;
+      val_tbs_1 = val_1 * 15;
+      val_tbs_2 = val_2 * 15;
     }
     ss << "m " << val_tbs_1 << " " << val_tbs_2 << "\r";
     send_msg(ss.str());
-    std::cout << "Sent: " << ss.str() << std::endl;
+    //std::cout << "Sent: " << ss.str() << std::endl;
   }
 
   void set_pid_values(int k_p, int k_d, int k_i, int k_o)
@@ -132,5 +171,7 @@ private:
     LibSerial::SerialPort serial_conn_;
     int timeout_ms_;
 };
+
+
 
 #endif

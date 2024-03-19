@@ -22,6 +22,7 @@
 #include <string>
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/imu.hpp"
 
 namespace waveshare_real
 {
@@ -34,7 +35,6 @@ hardware_interface::CallbackReturn WaveShareHardware::on_init(
   {
     return hardware_interface::CallbackReturn::ERROR;
   }
-
 
   cfg_.rear_left_wheel_name = info_.hardware_parameters["rear_left_wheel_name"];
   cfg_.rear_right_wheel_name = info_.hardware_parameters["rear_right_wheel_name"];
@@ -226,6 +226,15 @@ hardware_interface::return_type WaveShareHardware::read(
   //comms_.read_encoder_values(wheel_r_l_.enc, wheel_r_r_.enc);
 
   double delta_seconds = period.seconds();
+  float acceX = 0;
+  float acceY = 0;
+  float acceZ = 0;
+  float gyroX = 0;
+  float gyroY = 0;
+  float gyroZ = 0;
+  float magX = 0;
+  float magY = 0;
+  float magZ = 0;
 
   //double pos_prev = wheel_r_l_.pos;
   //wheel_r_l_.pos = wheel_r_l_.calc_enc_angle();
@@ -244,7 +253,8 @@ hardware_interface::return_type WaveShareHardware::read(
   wheel_f_l_.pos += wheel_f_l_.vel * delta_seconds;
   wheel_f_r_.pos += wheel_f_r_.vel * delta_seconds;
 
- 
+  //comms_.read_imu_values(
+    //acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
   return hardware_interface::return_type::OK; 
 }
 

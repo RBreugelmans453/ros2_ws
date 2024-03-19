@@ -11,14 +11,15 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   pluginlib
   rclcpp
   rclcpp_lifecycle
+  rclpy
 )
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
-
 
 ## COMPILE
 add_library(
@@ -58,6 +59,12 @@ install(
 install(
   DIRECTORY bringup/launch bringup/config
   DESTINATION share/waveshare_real
+)
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+install(PROGRAMS
+  scripts/imu_handler.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 install(TARGETS waveshare_real
   EXPORT export_waveshare_real

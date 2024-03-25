@@ -22,10 +22,24 @@
 #include <string>
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/duration.hpp"
+#include "rclcpp/macros.hpp"
+#include "rclcpp/time.hpp"
+#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
+#include "rclcpp_lifecycle/state.hpp"
 #include "sensor_msgs/msg/imu.hpp"
+#include "sensor_msgs/msg/magnetic_field.hpp"
 
 namespace waveshare_real
 {
+
+HardWareCommandPub::HardWareCommandPub() : Node("hardware_command_pub")
+{
+  imu_pub_ = create_publisher<sensor_msgs::msg::Imu>("/imu/data_raw", 10);
+  mag_pub_ = create_publisher<sensor_msgs::msg::MagneticField>("/imu/mag", 10);
+}
+
 hardware_interface::CallbackReturn WaveShareHardware::on_init(
   const hardware_interface::HardwareInfo & info)
 {
@@ -36,6 +50,7 @@ hardware_interface::CallbackReturn WaveShareHardware::on_init(
     return hardware_interface::CallbackReturn::ERROR;
   }
 
+  command_pub_ = std::make_shared<HardWareCommandPub>();
   cfg_.rear_left_wheel_name = info_.hardware_parameters["rear_left_wheel_name"];
   cfg_.rear_right_wheel_name = info_.hardware_parameters["rear_right_wheel_name"];
   cfg_.front_left_wheel_name = info_.hardware_parameters["front_left_wheel_name"];
@@ -175,6 +190,36 @@ hardware_interface::CallbackReturn WaveShareHardware::on_configure(
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
+void HardWareCommandPub::send_imu(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ)
+{
+  //comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
+  auto imu_msg = sensor_msgs::msg::Imu();
+  imu_msg.header.stamp = rclcpp::Clock().now(); 
+  //rclcpp::Node::now();
+  imu_msg.header.frame_id = "base_link";
+  imu_msg.orientation_covariance = {
+    -1, 0, 0, 0, 0, 0, 0, 0, 0};
+  imu_msg.angular_velocity.x = gyroX * 0.01745;
+  imu_msg.angular_velocity.y = gyroY * 0.01745;
+  imu_msg.angular_velocity.z = gyroZ * 0.01745;
+  imu_msg.linear_acceleration.x = acceX * 9806.65;
+  imu_msg.linear_acceleration.y = acceY * 9806.65;
+  imu_msg.linear_acceleration.z = acceZ * 9806.65;
+  imu_msg.linear_acceleration_covariance = {
+    -1, 0, 0, 0, 0, 0, 0, 0, 0};
+  imu_msg.angular_velocity_covariance = {
+    -1, 0, 0, 0, 0, 0, 0, 0, 0};
+  imu_pub_->publish(imu_msg);
+
+  auto mag_msg = sensor_msgs::msg::MagneticField();
+  mag_msg.header.stamp = rclcpp::Clock().now();
+  mag_msg.header.frame_id = "base_link";
+  mag_msg.magnetic_field.x = magX * 1000000;
+  mag_msg.magnetic_field.y = magY * 1000000;
+  mag_msg.magnetic_field.z = magZ * 1000000;
+  mag_pub_->publish(mag_msg);
+}
+
 hardware_interface::CallbackReturn WaveShareHardware::on_cleanup(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
@@ -201,6 +246,8 @@ hardware_interface::CallbackReturn WaveShareHardware::on_activate(
   {
     comms_.set_pid_values(cfg_.pid_p,cfg_.pid_d,cfg_.pid_i,cfg_.pid_o);
   }
+
+  //imu_pub_ = get_name()->create_publisher<sensor_msgs::msg::Imu>("/imu", 10);
   RCLCPP_INFO(rclcpp::get_logger("WaveShareHardware"), "Successfully activated!");
 
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -224,7 +271,6 @@ hardware_interface::return_type WaveShareHardware::read(
   }
   
   //comms_.read_encoder_values(wheel_r_l_.enc, wheel_r_r_.enc);
-
   double delta_seconds = period.seconds();
   float acceX = 0;
   float acceY = 0;
@@ -235,7 +281,6 @@ hardware_interface::return_type WaveShareHardware::read(
   float magX = 0;
   float magY = 0;
   float magZ = 0;
-
   //double pos_prev = wheel_r_l_.pos;
   //wheel_r_l_.pos = wheel_r_l_.calc_enc_angle();
  //wheel_r_l_.vel = (wheel_r_l_.pos - pos_prev) / delta_seconds;
@@ -253,8 +298,8 @@ hardware_interface::return_type WaveShareHardware::read(
   wheel_f_l_.pos += wheel_f_l_.vel * delta_seconds;
   wheel_f_r_.pos += wheel_f_r_.vel * delta_seconds;
 
-  //comms_.read_imu_values(
-    //acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
+  comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
+  command_pub_->send_imu(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
   return hardware_interface::return_type::OK; 
 }
 

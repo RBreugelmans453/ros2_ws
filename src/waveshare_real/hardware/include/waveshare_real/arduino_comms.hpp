@@ -7,9 +7,6 @@
 #include <libserial/SerialPort.h>
 #include <iostream>
 
-#include "sensor_msgs/msg/imu.hpp"
-#include "rclcpp/rclcpp.hpp"
-
 
 LibSerial::BaudRate convert_baud_rate(int baud_rate)
 {
@@ -101,7 +98,7 @@ public:
     val_2 = std::atoi(token_2.c_str());
     std::cout << "Received: " << val_1 << std::endl;
   }
-/*
+
   void read_imu_values(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ)
   {
     std::string response = send_msg("c\r");
@@ -114,7 +111,7 @@ public:
     std::string token;
     std::string imu_check;
     int tokenCount = 0;
-    //std::cout << "received: " << response << std::endl;
+    std::cout << "received: " << response << std::endl;
     while (std::getline(ss, token, ',')) {
       // Skip empty tokens
       if (token.empty()) continue;
@@ -136,7 +133,7 @@ public:
     }    
   }
 
-*/
+
 
   void set_motor_values(int val_1, int val_2)
   {

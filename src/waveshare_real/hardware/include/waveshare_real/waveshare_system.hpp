@@ -23,12 +23,15 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#include "sensor_msgs/msg/imu.hpp"
+#include "sensor_msgs/msg/magnetic_field.hpp"
 #include "waveshare_real/visibility_control.h"
 
 #include "waveshare_real/arduino_comms.hpp"
@@ -36,6 +39,18 @@
 
 namespace waveshare_real
 {
+
+class HardWareCommandPub : public rclcpp::Node
+{
+public:
+  HardWareCommandPub();
+  void send_imu(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ);
+
+private:
+  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr mag_pub_;
+};
+
 class WaveShareHardware : public hardware_interface::SystemInterface
 {
 
@@ -95,7 +110,11 @@ public:
   hardware_interface::return_type write(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+  std::shared_ptr<HardWareCommandPub> command_pub_;
+
 private:
+
+  void send_imu();
 
   ArduinoComms comms_;
   Config cfg_;

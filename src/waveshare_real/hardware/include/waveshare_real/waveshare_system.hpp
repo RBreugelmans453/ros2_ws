@@ -44,11 +44,12 @@ class HardWareCommandPub : public rclcpp::Node
 {
 public:
   HardWareCommandPub();
-  void send_imu(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ);
+  void send_imu(float acceX, float acceY, float acceZ, float gyroX, float gyroY, float gyroZ, float magX, float magY, float magZ, float imuR, float imuP, float imuY);
 
 private:
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
   rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr mag_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_ard_;
 };
 
 class WaveShareHardware : public hardware_interface::SystemInterface

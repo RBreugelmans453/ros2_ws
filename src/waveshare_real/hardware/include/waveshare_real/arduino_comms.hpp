@@ -99,7 +99,7 @@ public:
     std::cout << "Received: " << val_1 << std::endl;
   }
 
-  void read_imu_values(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ)
+  void read_imu_values(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ, float& imuR, float& imuP, float& imuY)
   {
     std::string response = send_msg("c\r");
     // Trim leading and trailing whitespace and commas
@@ -116,9 +116,13 @@ public:
       // Skip empty tokens
       if (token.empty()) continue;
       tokenCount++;
-
+      
       switch (tokenCount) {
-          case 1: imu_check = token; break;
+          case 1: imu_check = token;
+          if (imu_check != "imu") {
+            return;
+          }
+          break;
           case 2: acceX = std::stof(token); break;
           case 3: acceY = std::stof(token); break;
           case 4: acceZ = std::stof(token); break;
@@ -128,6 +132,9 @@ public:
           case 8: magX = std::stof(token); break;
           case 9: magY = std::stof(token); break;
           case 10: magZ = std::stof(token); break;
+          case 11: imuR = std::stof(token); break;
+          case 12: imuP = std::stof(token); break;
+          case 13: imuY = std::stof(token); break;
       }
       //std::cout << "Received: " << imu_check << std::endl;
     }    

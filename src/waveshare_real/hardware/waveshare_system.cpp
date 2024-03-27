@@ -38,6 +38,7 @@ HardWareCommandPub::HardWareCommandPub() : Node("hardware_command_pub")
 {
   imu_pub_ = create_publisher<sensor_msgs::msg::Imu>("/imu/data_raw", 10);
   mag_pub_ = create_publisher<sensor_msgs::msg::MagneticField>("/imu/mag", 10);
+  imu_ard_ = create_publisher<sensor_msgs::msg::Imu>("/imu/data", 10);
 }
 
 hardware_interface::CallbackReturn WaveShareHardware::on_init(
@@ -190,7 +191,7 @@ hardware_interface::CallbackReturn WaveShareHardware::on_configure(
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-void HardWareCommandPub::send_imu(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ)
+void HardWareCommandPub::send_imu(float acceX, float acceY, float acceZ, float gyroX, float gyroY, float gyroZ, float magX, float magY, float magZ, float imuR, float imuP, float imuY)
 {
   //comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
   auto imu_msg = sensor_msgs::msg::Imu();
@@ -218,6 +219,29 @@ void HardWareCommandPub::send_imu(float& acceX, float& acceY, float& acceZ, floa
   mag_msg.magnetic_field.y = magY * 1000000;
   mag_msg.magnetic_field.z = magZ * 1000000;
   mag_pub_->publish(mag_msg);
+  
+  auto imu_msg_ard = sensor_msgs::msg::Imu();
+  imu_msg_ard.header.stamp = rclcpp::Clock().now();
+  imu_msg_ard.header.frame_id = "base_link";
+  imu_msg_ard.orientation_covariance = {
+    -1, 0, 0, 0, 0, 0, 0, 0, 0};
+  double cy = cos(imuY * 0.0174533 * 0.5);
+  double sy = sin(imuY * 0.0174533 * 0.5);
+  double cp = cos(imuP * 0.0174533 * 0.5);
+  double sp = sin(imuP * 0.0174533 * 0.5);
+  double cr = cos(imuR * 0.0174533 * 0.5);
+  double sr = sin(imuR * 0.0174533 * 0.5);
+
+  double qw = cr * cp * cy + sr * sp * sy;
+  double qx = sr * cp * cy - cr * sp * sy;
+  double qy = cr * sp * cy + sr * cp * sy;
+  double qz = cr * cp * sy - sr * sp * cy;
+
+  imu_msg_ard.orientation.x = qx;
+  imu_msg_ard.orientation.y = qy;
+  imu_msg_ard.orientation.z = qz;
+  imu_msg_ard.orientation.w = qw; 
+  imu_ard_->publish(imu_msg_ard);
 }
 
 hardware_interface::CallbackReturn WaveShareHardware::on_cleanup(
@@ -281,6 +305,9 @@ hardware_interface::return_type WaveShareHardware::read(
   float magX = 0;
   float magY = 0;
   float magZ = 0;
+  float imuR = 0;
+  float imuP = 0;
+  float imuY = 0;
   //double pos_prev = wheel_r_l_.pos;
   //wheel_r_l_.pos = wheel_r_l_.calc_enc_angle();
  //wheel_r_l_.vel = (wheel_r_l_.pos - pos_prev) / delta_seconds;
@@ -298,8 +325,8 @@ hardware_interface::return_type WaveShareHardware::read(
   wheel_f_l_.pos += wheel_f_l_.vel * delta_seconds;
   wheel_f_r_.pos += wheel_f_r_.vel * delta_seconds;
 
-  comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
-  command_pub_->send_imu(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
+  comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ, imuR, imuP, imuY);
+  command_pub_->send_imu(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ, imuR, imuP, imuY);
   return hardware_interface::return_type::OK; 
 }
 

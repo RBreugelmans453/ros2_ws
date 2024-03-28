@@ -58,7 +58,7 @@
             </xacro:inertial_box>
         </link>
 
-        <link name="${prefix}lrw_link">
+        <link name="${prefix}rlw_link">
             <visual>
                 <geometry>
                     <cylinder length="0.0425" radius="0.04"/>
@@ -75,9 +75,9 @@
             </xacro:inertial_cylinder>
         </link>
 
-        <joint name="${prefix}lrw_joint" type="continuous">
+        <joint name="${prefix}rlw_joint" type="continuous">
             <parent link="${prefix}base_link"/>
-            <child link="${prefix}lrw_link"/>
+            <child link="${prefix}rlw_link"/>
             <origin xyz="0.0 0.06275 0.0" rpy="-1.5708 0 0"/>
             <axis xyz="0 0 1"/>
             <dynamics damping="0.2"/>
@@ -108,7 +108,7 @@
             <dynamics damping="0.2"/>
         </joint>
 
-        <link name="${prefix}lfw_link">
+        <link name="${prefix}flw_link">
             <visual>
                 <geometry>
                     <cylinder length="0.0425" radius="0.04"/>
@@ -125,15 +125,15 @@
             </xacro:inertial_cylinder>
         </link>
 
-        <joint name="${prefix}lfw_joint" type="continuous">
+        <joint name="${prefix}flw_joint" type="continuous">
             <parent link="${prefix}base_link"/>
-            <child link="${prefix}lfw_link"/>
+            <child link="${prefix}flw_link"/>
             <origin xyz="0.097 0.06275 0.0" rpy="-1.5708 0 0"/>
             <axis xyz="0 0 1"/> 
             <dynamics damping="0.2"/>
         </joint>
 
-        <link name="${prefix}rfw_link">
+        <link name="${prefix}frw_link">
             <visual>
                 <geometry>
                     <cylinder length="0.0425" radius="0.04"/>
@@ -150,9 +150,9 @@
             </xacro:inertial_cylinder>
         </link>
 
-        <joint name="${prefix}rfw_joint" type="continuous">
+        <joint name="${prefix}frw_joint" type="continuous">
             <parent link="${prefix}base_link"/>
-            <child link="${prefix}rfw_link"/>
+            <child link="${prefix}frw_link"/>
             <origin xyz="0.097 -0.06275 0.0" rpy="1.5708 0 0"/>
             <axis xyz="0 0 -1"/> 
             <dynamics damping="0.2"/>

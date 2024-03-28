@@ -99,6 +99,7 @@ public:
     std::cout << "Received: " << val_1 << std::endl;
   }
 
+  /*
   void read_imu_values(float& acceX, float& acceY, float& acceZ, float& gyroX, float& gyroY, float& gyroZ, float& magX, float& magY, float& magZ, float& imuR, float& imuP, float& imuY)
   {
     std::string response = send_msg("c\r");
@@ -137,8 +138,9 @@ public:
           case 13: imuY = std::stof(token); break;
       }
       //std::cout << "Received: " << imu_check << std::endl;
-    }    
-  }
+    }   
+    
+  } */
 
 
 

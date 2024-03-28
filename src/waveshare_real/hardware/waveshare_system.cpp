@@ -33,13 +33,14 @@
 
 namespace waveshare_real
 {
-
+/*
 HardWareCommandPub::HardWareCommandPub() : Node("hardware_command_pub")
 {
   imu_pub_ = create_publisher<sensor_msgs::msg::Imu>("/imu/data_raw", 10);
   mag_pub_ = create_publisher<sensor_msgs::msg::MagneticField>("/imu/mag", 10);
   imu_ard_ = create_publisher<sensor_msgs::msg::Imu>("/imu/data", 10);
 }
+*/
 
 hardware_interface::CallbackReturn WaveShareHardware::on_init(
   const hardware_interface::HardwareInfo & info)
@@ -51,7 +52,7 @@ hardware_interface::CallbackReturn WaveShareHardware::on_init(
     return hardware_interface::CallbackReturn::ERROR;
   }
 
-  command_pub_ = std::make_shared<HardWareCommandPub>();
+  //command_pub_ = std::make_shared<HardWareCommandPub>();
   cfg_.rear_left_wheel_name = info_.hardware_parameters["rear_left_wheel_name"];
   cfg_.rear_right_wheel_name = info_.hardware_parameters["rear_right_wheel_name"];
   cfg_.front_left_wheel_name = info_.hardware_parameters["front_left_wheel_name"];
@@ -190,7 +191,7 @@ hardware_interface::CallbackReturn WaveShareHardware::on_configure(
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
-
+/*
 void HardWareCommandPub::send_imu(float acceX, float acceY, float acceZ, float gyroX, float gyroY, float gyroZ, float magX, float magY, float magZ, float imuR, float imuP, float imuY)
 {
   //comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ);
@@ -243,6 +244,7 @@ void HardWareCommandPub::send_imu(float acceX, float acceY, float acceZ, float g
   imu_msg_ard.orientation.w = qw; 
   imu_ard_->publish(imu_msg_ard);
 }
+*/
 
 hardware_interface::CallbackReturn WaveShareHardware::on_cleanup(
   const rclcpp_lifecycle::State & /*previous_state*/)
@@ -325,8 +327,8 @@ hardware_interface::return_type WaveShareHardware::read(
   wheel_f_l_.pos += wheel_f_l_.vel * delta_seconds;
   wheel_f_r_.pos += wheel_f_r_.vel * delta_seconds;
 
-  comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ, imuR, imuP, imuY);
-  command_pub_->send_imu(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ, imuR, imuP, imuY);
+  //comms_.read_imu_values(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ, imuR, imuP, imuY);
+  //command_pub_->send_imu(acceX, acceY, acceZ, gyroX, gyroY, gyroZ, magX, magY, magZ, imuR, imuP, imuY);
   return hardware_interface::return_type::OK; 
 }
 

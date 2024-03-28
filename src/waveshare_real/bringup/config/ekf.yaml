@@ -1,0 +1,30 @@
+ekf_filter_node:
+  ros__parameters:
+    frequency: 30.0
+
+    # 2D mode, if true, the EKF will only use the roll and yaw measurements
+    two_d_mode: true
+
+    # If true, the EKF will publish the fused orientation as a quaternion
+    publish_tf: true
+
+    base_link_frame: base_footprint
+    map_frame: map
+    odom_frame: odom
+    world_frame: odom
+
+    odom0: /waveshare_real_controller/odom
+    odom0_config: [false, false, false,
+                  false, false, false,
+                  true, true, false,
+                  false, false, true,
+                  false, false, false]
+    odom0_differential: false
+
+    imu0: /imu/data
+    imu0_config: [false, false, false,
+                  false, false, true,
+                  false, false, false,
+                  false, false, true,
+                  true, false, false]
+    imu0_differential: false

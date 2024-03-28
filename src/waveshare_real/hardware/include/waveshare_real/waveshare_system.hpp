@@ -40,6 +40,7 @@
 namespace waveshare_real
 {
 
+/*
 class HardWareCommandPub : public rclcpp::Node
 {
 public:
@@ -51,6 +52,7 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr mag_pub_;
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_ard_;
 };
+*/
 
 class WaveShareHardware : public hardware_interface::SystemInterface
 {
@@ -111,11 +113,11 @@ public:
   hardware_interface::return_type write(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-  std::shared_ptr<HardWareCommandPub> command_pub_;
+  //std::shared_ptr<HardWareCommandPub> command_pub_;
 
 private:
 
-  void send_imu();
+  //void send_imu();
 
   ArduinoComms comms_;
   Config cfg_;

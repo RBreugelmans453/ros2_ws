@@ -42,6 +42,21 @@ def generate_launch_description():
             "my_controllers.yaml",
         ]
     )
+    robot_localization_file = PathJoinSubstitution(
+        [
+            FindPackageShare("waveshare_real"),
+            "config",
+            "ekf.yaml",
+        ]
+    )
+
+    imu_filter_config = PathJoinSubstitution(
+        [
+            FindPackageShare("waveshare_real"),
+            "config",
+            "madgwick.yaml",
+        ]
+    )
 
     control_node = Node(
         package="controller_manager",
@@ -81,12 +96,44 @@ def generate_launch_description():
         )
     )
 
+    robot_localization = Node(
+        package="robot_localization",
+        executable="ekf_node",
+        name="ekf_filter_node",
+        output="screen",
+        parameters=[robot_localization_file],
+    )
+
+    imu_filter = Node(
+        package="imu_filter_madgwick",
+        executable="imu_filter_madgwick_node",
+        name="imu_filter_node",
+        output="screen",
+        parameters=[imu_filter_config, {"use_mag": False}, {"publish_tf": False}],
+    )
+
+    lidar_node = Node(
+        package='rplidar_ros',
+        executable='rplidar_composition',
+        output='screen',
+        parameters=[{
+            'serial_port': '/dev/ttyUSB1',
+            'serial_baudrate': 115200,
+            'frame_id': 'lidar_link',
+            'angle_compensate': True,
+            'scan_mode': 'Standard'
+        }]        
+    )
+
 
     nodes = [
         control_node,
         robot_state_pub_node,
         joint_broad_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+        robot_localization,
+        imu_filter,
+        lidar_node,
     ]
 
     # Launch them all!

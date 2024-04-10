@@ -21,7 +21,6 @@
         </material>
         
         <link name="${prefix}base_link">
-
         </link>
 
         <link name="${prefix}base_footprint">

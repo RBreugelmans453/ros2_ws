@@ -158,12 +158,13 @@ public:
 
     //opposite values mean turning
     else if (val_1 == -val_2 || val_2 == -val_1) {
-      val_tbs_1 = val_1 * 15;
-      val_tbs_2 = val_2 * 15;
+      val_tbs_1 = val_1 * 12;
+      val_tbs_2 = val_2 * 12;
     }
-    ss << "m " << val_tbs_1 << " " << val_tbs_2 << "\r";
+
+    ss << "m " << val_1 << " " << val_2 << "\r";
     send_msg(ss.str());
-    //std::cout << "Sent: " << ss.str() << std::endl;
+    std::cout << "Sent: " << ss.str() << std::endl;
   }
 
   void set_pid_values(int k_p, int k_d, int k_i, int k_o)

@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  network_mode: "host"
+  privileged: true
+  cap_add:
+    - SYS_PTRACE
+  security_opt:
+    - seccomp:unconfined   
+  volumes:
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
+  devices:
+    - /dev/ttyUSB0:/dev/ttyUSB0
+    - /dev/ttyUSB1:/dev/ttyUSB1
+    - /dev/serial/by-path/platform-70090000.xusb-usb-0:2.1:1.0-port0:/dev/serial/by-path/platform-70090000.xusb-usb-0:2.1:1.0-port0
+    - /dev/serial/by-path/platform-70090000.xusb-usb-0:2.3:1.0-port0:/dev/serial/by-path/platform-70090000.xusb-usb-0:2.3:1.0-port0
+    - /dev/i2c-0:/dev/i2c-0
+  build:
+    context: .
+    dockerfile: ./Dockerfile
+  command: /bin/sh -c "while sleep 1000; do :; done"
